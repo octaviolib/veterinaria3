@@ -1,7 +1,7 @@
 
 "use strict";
 
-// 1. Obtener los elementos del HTML
+
 const formulario = document.getElementById("formMascotas");
 const tablaMascotas = document.getElementById("tablaMascotas");
 const totalMascotas = document.getElementById("totalMascotas");
@@ -12,25 +12,25 @@ const btnGuardar = document.getElementById("btnGuardar");
 const btnLimpiar = document.getElementById("btnLimpiar");
 const btnCancelar = document.getElementById("btnCancelar");
 
-// 2. Recuperar las mascotas guardadas
+
 let mascotas = JSON.parse(localStorage.getItem("mascotas")) || [];
 
-// 3. Identificar si estamos editando una mascota
+
 let idMascotaEditando = null;
 
-// 4. Guardar las mascotas en LocalStorage
+
 function guardarMascotas() {
     localStorage.setItem("mascotas", JSON.stringify(mascotas));
 }
 
-// 5. Mostrar las mascotas en la tabla
+
 function mostrarMascotas() {
     tablaMascotas.innerHTML = "";
 
     mascotas.forEach(function (mascota) {
         const fila = document.createElement("tr");
 
-        // Mostrar los datos de cada mascota
+        
         const datos = [
             mascota.nombreMascota,
             mascota.nombreDuenio,
@@ -47,7 +47,6 @@ function mostrarMascotas() {
             fila.appendChild(celda);
         });
 
-        // Crear la celda de acciones
         const celdaAcciones = document.createElement("td");
 
         const btnEditar = document.createElement("button");
@@ -71,13 +70,11 @@ function mostrarMascotas() {
         tablaMascotas.appendChild(fila);
     });
 
-    // Actualizar el total y el mensaje de tabla vacía
-    totalMascotas.textContent = mascotas.length;
+        totalMascotas.textContent = mascotas.length;
 
     mensajeVacio.classList.toggle("d-none", mascotas.length > 0);
 }
 
-// 6. Registrar una mascota o guardar los cambios
 formulario.addEventListener("submit", function (evento) {
     evento.preventDefault();
 
@@ -106,7 +103,7 @@ formulario.addEventListener("submit", function (evento) {
     const edad = Number(edadTexto);
     const peso = Number(pesoTexto);
 
-    // Validar los datos
+
     if (
         !nombreMascota ||
         !nombreDuenio ||
@@ -125,7 +122,7 @@ formulario.addEventListener("submit", function (evento) {
         return;
     }
 
-    // Crear el objeto con los datos de la mascota
+  
     const datosMascota = {
         nombreMascota: nombreMascota,
         nombreDuenio: nombreDuenio,
@@ -137,7 +134,7 @@ formulario.addEventListener("submit", function (evento) {
     };
 
     if (idMascotaEditando !== null) {
-        // Modificar una mascota existente
+       
         mascotas = mascotas.map(function (mascota) {
             if (mascota.idMascota === idMascotaEditando) {
                 return {
@@ -151,7 +148,7 @@ formulario.addEventListener("submit", function (evento) {
 
         mensaje.textContent = "Mascota modificada correctamente.";
     } else {
-        // Registrar una mascota nueva
+      
         const nuevaMascota = {
             idMascota: crypto.randomUUID(),
             ...datosMascota
@@ -162,13 +159,12 @@ formulario.addEventListener("submit", function (evento) {
         mensaje.textContent = "Mascota registrada correctamente.";
     }
 
-    // Guardar y actualizar la tabla
     guardarMascotas();
     mostrarMascotas();
     limpiarFormulario();
 });
 
-// 7. Detectar los clics en Editar y Eliminar
+
 tablaMascotas.addEventListener("click", function (evento) {
     const boton = evento.target.closest("button[data-accion]");
 
@@ -184,10 +180,10 @@ tablaMascotas.addEventListener("click", function (evento) {
 
         if (!mascota) return;
 
-        // Guardar el identificador de la mascota seleccionada
+       
         idMascotaEditando = id;
 
-        // Cargar los datos en el formulario
+        
         document.getElementById("nombreMascota").value =
             mascota.nombreMascota;
 
@@ -209,7 +205,6 @@ tablaMascotas.addEventListener("click", function (evento) {
         document.getElementById("peso").value =
             mascota.peso;
 
-        // Cambiar el formulario al modo edición
         tituloFormulario.textContent = "Editar mascota";
         btnGuardar.textContent = "Guardar cambios";
         btnCancelar.classList.remove("d-none");
@@ -234,8 +229,7 @@ tablaMascotas.addEventListener("click", function (evento) {
         guardarMascotas();
         mostrarMascotas();
 
-        // Si se elimina la mascota que estábamos editando,
-        // limpiar también el formulario
+        
         if (idMascotaEditando === id) {
             limpiarFormulario();
         }
@@ -244,7 +238,6 @@ tablaMascotas.addEventListener("click", function (evento) {
     }
 });
 
-// 8. Limpiar el formulario y salir del modo edición
 function limpiarFormulario() {
     formulario.reset();
 
@@ -255,17 +248,14 @@ function limpiarFormulario() {
     btnCancelar.classList.add("d-none");
 }
 
-// 9. Botón Limpiar formulario
 btnLimpiar.addEventListener("click", function () {
     limpiarFormulario();
     mensaje.textContent = "";
 });
 
-// 10. Botón Cancelar edición
 btnCancelar.addEventListener("click", function () {
     limpiarFormulario();
     mensaje.textContent = "Edición cancelada.";
 });
 
-// 11. Mostrar las mascotas al cargar la página
 mostrarMascotas();
