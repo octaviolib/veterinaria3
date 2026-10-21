@@ -12,13 +12,13 @@ const btnGuardar = document.getElementById("btnGuardar");
 const btnLimpiar = document.getElementById("btnLimpiar");
 const btnCancelar = document.getElementById("btnCancelar");
 
-// 2. Recuperar las mascotas de LocalStorage
+// 2. Recuperar las mascotas guardadas
 let mascotas = JSON.parse(localStorage.getItem("mascotas")) || [];
 
 // 3. Identificar si estamos editando una mascota
 let idMascotaEditando = null;
 
-// 4. Guardar los datos en LocalStorage
+// 4. Guardar las mascotas en LocalStorage
 function guardarMascotas() {
     localStorage.setItem("mascotas", JSON.stringify(mascotas));
 }
@@ -30,62 +30,88 @@ function mostrarMascotas() {
     mascotas.forEach(function (mascota) {
         const fila = document.createElement("tr");
 
-        fila.innerHTML = `
-            <td>${mascota.nombreMascota}</td>
-            <td>${mascota.nombreDuenio}</td>
-            <td>${mascota.color}</td>
-            <td>${mascota.edad}</td>
-            <td>${mascota.peso}</td>
-            <td>
-                <button
-                    type="button"
-                    class="btn btn-warning btn-sm me-1"
-                    data-accion="editar"
-                    data-id="${mascota.idMascota}">
-                    Editar
-                </button>
+        // Mostrar los datos de cada mascota
+        const datos = [
+            mascota.nombreMascota,
+            mascota.nombreDuenio,
+            mascota.tipoAnimal || "Sin especificar",
+            mascota.raza || "Desconocido",
+            mascota.color,
+            mascota.edad,
+            mascota.peso
+        ];
 
-                <button
-                    type="button"
-                    class="btn btn-danger btn-sm"
-                    data-accion="eliminar"
-                    data-id="${mascota.idMascota}">
-                    Eliminar
-                </button>
-            </td>
-        `;
+        datos.forEach(function (dato) {
+            const celda = document.createElement("td");
+            celda.textContent = dato;
+            fila.appendChild(celda);
+        });
+
+        // Crear la celda de acciones
+        const celdaAcciones = document.createElement("td");
+
+        const btnEditar = document.createElement("button");
+        btnEditar.type = "button";
+        btnEditar.className = "btn btn-warning btn-sm me-1";
+        btnEditar.textContent = "Editar";
+        btnEditar.dataset.accion = "editar";
+        btnEditar.dataset.id = mascota.idMascota;
+
+        const btnEliminar = document.createElement("button");
+        btnEliminar.type = "button";
+        btnEliminar.className = "btn btn-danger btn-sm";
+        btnEliminar.textContent = "Eliminar";
+        btnEliminar.dataset.accion = "eliminar";
+        btnEliminar.dataset.id = mascota.idMascota;
+
+        celdaAcciones.appendChild(btnEditar);
+        celdaAcciones.appendChild(btnEliminar);
+        fila.appendChild(celdaAcciones);
 
         tablaMascotas.appendChild(fila);
     });
 
+    // Actualizar el total y el mensaje de tabla vacía
     totalMascotas.textContent = mascotas.length;
 
     mensajeVacio.classList.toggle("d-none", mascotas.length > 0);
 }
 
-// 6. Registrar o guardar cambios
+// 6. Registrar una mascota o guardar los cambios
 formulario.addEventListener("submit", function (evento) {
     evento.preventDefault();
 
-    const nombreMascota = document
-        .getElementById("nombreMascota").value.trim();
+    // Capturar los datos del formulario
+    const nombreMascota =
+        document.getElementById("nombreMascota").value.trim();
 
-    const nombreDuenio = document
-        .getElementById("nombreDuenio").value.trim();
+    const nombreDuenio =
+        document.getElementById("nombreDuenio").value.trim();
 
-    const color = document
-        .getElementById("color").value.trim();
+    const tipoAnimal =
+        document.getElementById("tipoAnimal").value;
 
-    const edadTexto = document.getElementById("edad").value;
-    const pesoTexto = document.getElementById("peso").value;
+    const raza =
+        document.getElementById("raza").value.trim();
+
+    const color =
+        document.getElementById("color").value.trim();
+
+    const edadTexto =
+        document.getElementById("edad").value;
+
+    const pesoTexto =
+        document.getElementById("peso").value;
 
     const edad = Number(edadTexto);
     const peso = Number(pesoTexto);
 
-    // Validaciones adicionales
+    // Validar los datos
     if (
         !nombreMascota ||
         !nombreDuenio ||
+        !tipoAnimal ||
+        !raza ||
         !color ||
         edadTexto === "" ||
         pesoTexto === "" ||
@@ -95,14 +121,16 @@ formulario.addEventListener("submit", function (evento) {
         peso <= 0
     ) {
         mensaje.textContent =
-            "Revisá los datos. La edad debe ser un entero no negativo y el peso debe ser mayor que cero.";
+            'Completá todos los campos. Si no conocés la raza, escribí "Desconocido".';
         return;
     }
 
-    // Crear el objeto con los datos del formulario
+    // Crear el objeto con los datos de la mascota
     const datosMascota = {
         nombreMascota: nombreMascota,
         nombreDuenio: nombreDuenio,
+        tipoAnimal: tipoAnimal,
+        raza: raza,
         color: color,
         edad: edad,
         peso: peso
@@ -134,6 +162,7 @@ formulario.addEventListener("submit", function (evento) {
         mensaje.textContent = "Mascota registrada correctamente.";
     }
 
+    // Guardar y actualizar la tabla
     guardarMascotas();
     mostrarMascotas();
     limpiarFormulario();
@@ -155,15 +184,21 @@ tablaMascotas.addEventListener("click", function (evento) {
 
         if (!mascota) return;
 
-        // Guardar el ID de la mascota que se está editando
+        // Guardar el identificador de la mascota seleccionada
         idMascotaEditando = id;
 
-        // Cargar sus datos en el formulario
+        // Cargar los datos en el formulario
         document.getElementById("nombreMascota").value =
             mascota.nombreMascota;
 
         document.getElementById("nombreDuenio").value =
             mascota.nombreDuenio;
+
+        document.getElementById("tipoAnimal").value =
+            mascota.tipoAnimal || "";
+
+        document.getElementById("raza").value =
+            mascota.raza || "";
 
         document.getElementById("color").value =
             mascota.color;
@@ -199,8 +234,8 @@ tablaMascotas.addEventListener("click", function (evento) {
         guardarMascotas();
         mostrarMascotas();
 
-        // Si eliminamos la mascota que se estaba editando,
-        // limpiar el formulario
+        // Si se elimina la mascota que estábamos editando,
+        // limpiar también el formulario
         if (idMascotaEditando === id) {
             limpiarFormulario();
         }
@@ -232,5 +267,5 @@ btnCancelar.addEventListener("click", function () {
     mensaje.textContent = "Edición cancelada.";
 });
 
-// 11. Mostrar los registros al abrir la página
+// 11. Mostrar las mascotas al cargar la página
 mostrarMascotas();
