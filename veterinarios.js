@@ -21,10 +21,9 @@ const btnGuardar = document.getElementById("btnGuardar");
 const btnCancelar = document.getElementById("btnCancelar");
 const btnLimpiar = document.getElementById("btnLimpiar");
 
-// Si tiene un ID, estamos editando. Si no, estamos registrando
+
 let idEnEdicion = null;
 
-// Obtiene los veterinarios almacenados
 function obtenerVeterinarios() {
     try {
         const datos = localStorage.getItem(CLAVE_VETERINARIOS);
@@ -42,7 +41,7 @@ function obtenerVeterinarios() {
     }
 }
 
-// Guarda el arreglo completo en LocalStorage.
+
 function guardarVeterinarios(veterinarios) {
     try {
         localStorage.setItem(
@@ -58,7 +57,7 @@ function guardarVeterinarios(veterinarios) {
     }
 }
 
-// Genera un identificador unico.
+
 function generarId() {
     if (typeof crypto.randomUUID === "function") {
         return crypto.randomUUID();
@@ -67,7 +66,6 @@ function generarId() {
     return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-// Formatea el valor de consulta como moneda argentina.
 function formatearMoneda(valor) {
     return new Intl.NumberFormat("es-AR", {
         style: "currency",
@@ -75,20 +73,17 @@ function formatearMoneda(valor) {
     }).format(valor);
 }
 
-// muestra un mensaje al usuario.
 function mostrarMensaje(texto, tipo) {
     mensaje.textContent = texto;
     mensaje.className = `alert alert-${tipo} mt-3 mb-0`;
 }
 
-// Crea una celda de texto sin insertar HTML ingresado por el usuario.
 function crearCelda(texto) {
     const celda = document.createElement("td");
     celda.textContent = texto;
     return celda;
 }
 
-// construye la tabla con los veterinarios almacenados.
 function listarVeterinarios() {
     const veterinarios = obtenerVeterinarios();
 
@@ -121,7 +116,6 @@ function listarVeterinarios() {
             editarVeterinario(veterinario.idVeterinario);
         });
 
-        // boton Eliminar
         const btnEliminar = document.createElement("button");
         btnEliminar.type = "button";
         btnEliminar.className = "btn btn-danger btn-sm mb-1";
@@ -140,7 +134,6 @@ function listarVeterinarios() {
     mensajeVacio.classList.toggle("d-none", veterinarios.length > 0);
 }
 
-// Valida y obtiene los datos del formulario
 function obtenerDatosFormulario() {
     const matricula = Number(campoMatricula.value);
     const valorConsulta = Number(campoValorConsulta.value);
@@ -173,7 +166,6 @@ function obtenerDatosFormulario() {
     };
 }
 
-// Registra un veterinario 
 formulario.addEventListener("submit", function (evento) {
     evento.preventDefault();
 
@@ -194,8 +186,7 @@ formulario.addEventListener("submit", function (evento) {
     }
 
     if (idEnEdicion === null) {
-        // Alta: creamos un objeto con ID automático.
-        const nuevoVeterinario = {
+               const nuevoVeterinario = {
             idVeterinario: generarId(),
             ...datos
         };
@@ -236,7 +227,6 @@ formulario.addEventListener("submit", function (evento) {
     listarVeterinarios();
 });
 
-// carga los datos del veterinario en el formulario
 function editarVeterinario(id) {
     const veterinarios = obtenerVeterinarios();
 
@@ -313,7 +303,6 @@ function eliminarVeterinario(id) {
     mostrarMensaje("Veterinario eliminado correctamente.", "success");
 }
 
-// restablece el formulario al modo de alta
 function cancelarEdicion() {
     idEnEdicion = null;
     formulario.reset();
@@ -323,17 +312,14 @@ function cancelarEdicion() {
     btnCancelar.classList.add("d-none");
 }
 
-// cancelar edición.
 btnCancelar.addEventListener("click", function () {
     cancelarEdicion();
     mostrarMensaje("Edición cancelada.", "secondary");
 });
 
-// si se limpia el formulario durante una edicion salimos del modo edición.
 btnLimpiar.addEventListener("click", function () {
     cancelarEdicion();
     mensaje.classList.add("d-none");
 });
 
-// mostrar los registros al abrir la pagina.
 listarVeterinarios();
