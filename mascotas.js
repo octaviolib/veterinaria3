@@ -30,7 +30,6 @@ function render() {
   mascotas.forEach((mascota) => {
     listadoMascotas.innerHTML += `
       <tr>
-        <td>${mascota.idMascota.slice(0, 8)}…</td>
         <td>${mascota.nombreMascota}</td>
         <td>${mascota.nombreDuenio}</td>
         <td>${mascota.color}</td>
