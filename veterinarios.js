@@ -39,7 +39,6 @@ function render() {
   veterinarios.forEach((veterinario) => {
     listadoVeterinarios.innerHTML += `
       <tr>
-        <td>${veterinario.idVeterinario.slice(0, 8)}…</td>
         <td>${veterinario.matricula}</td>
         <td>${veterinario.nombre}</td>
         <td>${veterinario.especializacion}</td>
