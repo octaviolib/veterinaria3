@@ -132,7 +132,6 @@ formulario.addEventListener("submit", (evento) => {
     });
     mostrarMensaje("Mascota modificada correctamente.", "success");
   } else {
-    // ALTA
     mascotas.push({
       idMascota: generarId(),
       ...datosMascota
